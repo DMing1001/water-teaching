@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>水利数值模拟教学 | ArcGIS Pro & HEC-RAS</title>
+  <meta name="description" content="ArcGIS Pro 地理信息处理与 HEC-RAS 水动力数值模拟教学视频，从入门到实战。">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --c-bg: #0a1628;
+      --c-bg-card: #0f1f38;
+      --c-bg-card-hover: #142a4a;
+      --c-primary: #3b9eff;
+      --c-accent: #00d4aa;
+      --c-accent2: #f0b429;
+      --c-text: #e2e8f0;
+      --c-text-dim: #8899b0;
+      --c-text-bright: #ffffff;
+      --c-border: rgba(59,158,255,0.15);
+      --c-glow: rgba(59,158,255,0.25);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
+      --shadow-glow: 0 0 40px var(--c-glow);
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--c-bg);
+      color: var(--c-text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-water { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .bg-water .wave { position: absolute; bottom: -10%; left: -10%; width: 120%; height: 60%; border-radius: 45% 48% 40% 42%; opacity: 0.04; animation: waveFloat 12s ease-in-out infinite alternate; }
+    .bg-water .wave:nth-child(1) { background: var(--c-primary); }
+    .bg-water .wave:nth-child(2) { background: var(--c-accent); animation-duration: 16s; animation-delay: -4s; bottom: -15%; }
+    .bg-water .wave:nth-child(3) { background: var(--c-primary); animation-duration: 20s; animation-delay: -8s; bottom: -20%; opacity: 0.025; }
+    @keyframes waveFloat { 0% { transform: translateX(0) rotate(0deg); } 100% { transform: translateX(3%) rotate(3deg); } }
+
+    .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .particle { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--c-primary); opacity: 0; animation: particleFloat linear infinite; }
+    @keyframes particleFloat { 0% { opacity: 0; transform: translateY(100vh) scale(0); } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(-10vh) scale(1); } }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* Nav */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 16px 0; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); background: rgba(10,22,40,0.8); border-bottom: 1px solid var(--c-border); }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--c-text-bright); font-weight: 700; font-size: 1.2rem; }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { color: var(--c-text-dim); text-decoration: none; font-size: 0.95rem; transition: var(--transition); position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--c-primary); transition: var(--transition); }
+    .nav-links a:hover { color: var(--c-text-bright); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-mobile-btn { display: none; background: none; border: none; color: var(--c-text); font-size: 1.5rem; cursor: pointer; }
+
+    /* Hero */
+    .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 24px 80px; }
+    .hero-content { max-width: 800px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px; border-radius: 999px; background: rgba(59,158,255,0.1); border: 1px solid var(--c-border); color: var(--c-primary); font-size: 0.85rem; margin-bottom: 28px; animation: fadeInUp 0.8s ease; }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-accent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .hero h1 { font-size: clamp(2.2rem,5vw,3.6rem); font-weight: 800; color: var(--c-text-bright); line-height: 1.2; margin-bottom: 20px; animation: fadeInUp 0.8s ease 0.1s both; }
+    .hero h1 .gradient { background: linear-gradient(135deg, var(--c-primary), var(--c-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero p { font-size: 1.15rem; color: var(--c-text-dim); max-width: 600px; margin: 0 auto 36px; animation: fadeInUp 0.8s ease 0.2s both; }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; animation: fadeInUp 0.8s ease 0.3s both; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Buttons */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; border-radius: 12px; font-size: 1rem; font-weight: 600; text-decoration: none; transition: var(--transition); cursor: pointer; border: none; }
+    .btn-primary { background: linear-gradient(135deg, var(--c-primary), #2d7de0); color: #fff; box-shadow: 0 4px 20px rgba(59,158,255,0.35); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,158,255,0.5); }
+    .btn-ghost { background: rgba(255,255,255,0.05); color: var(--c-text); border: 1px solid var(--c-border); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: var(--c-primary); color: var(--c-text-bright); }
+
+    /* Sections */
+    section { padding: 100px 0; position: relative; z-index: 1; }
+    .section-label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--c-accent); margin-bottom: 12px; }
+    .section-title { font-size: clamp(1.8rem,3vw,2.5rem); font-weight: 700; color: var(--c-text-bright); margin-bottom: 16px; }
+    .section-desc { color: var(--c-text-dim); font-size: 1.05rem; max-width: 600px; margin-bottom: 48px; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; padding: 60px 0; }
+    .stat-card { text-align: center; padding: 32px 20px; border-radius: var(--radius); background: var(--c-bg-card); border: 1px solid var(--c-border); transition: var(--transition); }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); border-color: rgba(59,158,255,0.3); }
+    .stat-number { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--c-primary), var(--c-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-label { color: var(--c-text-dim); margin-top: 4px; font-size: 0.95rem; }
+
+    /* Course Grid */
+    .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; }
+    .course-card { background: var(--c-bg-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); cursor: pointer; }
+    .course-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-glow); border-color: rgba(59,158,255,0.35); }
+    .course-thumb { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
+    .course-thumb-bg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+    .course-thumb-bg.arcgis { background: linear-gradient(135deg, #1a3a5c, #0d5e3a); }
+    .course-thumb-bg.hec-ras { background: linear-gradient(135deg, #1a2a5c, #3a1a5c); }
+    .course-thumb-bg.general { background: linear-gradient(135deg, #2a1a3c, #1a3a4c); }
+    .course-thumb-bg.series { background: linear-gradient(135deg, #1a3a5c, #2a1a5c); }
+    .play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); opacity: 0; transition: var(--transition); }
+    .course-card:hover .play-overlay { opacity: 1; }
+    .play-btn { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+    .play-btn svg { width: 22px; height: 22px; fill: var(--c-bg); margin-left: 3px; }
+    .course-card:hover .play-btn { transform: scale(1.1); }
+    .course-tag { position: absolute; top: 12px; left: 12px; padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; backdrop-filter: blur(8px); }
+    .tag-arcgis { background: rgba(0,180,90,0.8); color: #fff; }
+    .tag-hecras { background: rgba(100,60,180,0.8); color: #fff; }
+    .tag-series { background: rgba(59,158,255,0.8); color: #fff; }
+    .tag-general { background: rgba(240,180,40,0.8); color: #1a1a1a; }
+    .course-duration { position: absolute; bottom: 12px; right: 12px; padding: 3px 10px; border-radius: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 0.8rem; backdrop-filter: blur(4px); }
+    .course-body { padding: 20px 24px 24px; }
+    .course-title { font-size: 1.1rem; font-weight: 600; color: var(--c-text-bright); margin-bottom: 8px; line-height: 1.4; }
+    .course-desc { color: var(--c-text-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 16px; }
+    .course-meta { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; color: var(--c-text-dim); }
+    .course-meta-left { display: flex; align-items: center; gap: 12px; }
+    .course-meta-item { display: flex; align-items: center; gap: 4px; }
+    .course-level { padding: 3px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    .level-beginner { background: rgba(0,212,170,0.15); color: var(--c-accent); }
+    .level-intermediate { background: rgba(59,158,255,0.15); color: var(--c-primary); }
+    .level-advanced { background: rgba(240,180,40,0.15); color: var(--c-accent2); }
+
+    /* Roadmap */
+    .roadmap { position: relative; padding-left: 40px; }
+    .roadmap::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--c-primary), var(--c-accent), transparent); }
+    .roadmap-item { position: relative; padding: 0 0 48px 40px; }
+    .roadmap-item:last-child { padding-bottom: 0; }
+    .roadmap-dot { position: absolute; left: -33px; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--c-bg); border: 3px solid var(--c-primary); z-index: 2; }
+    .roadmap-item:nth-child(even) .roadmap-dot { border-color: var(--c-accent); }
+    .roadmap-phase { font-size: 0.8rem; color: var(--c-primary); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
+    .roadmap-item:nth-child(even) .roadmap-phase { color: var(--c-accent); }
+    .roadmap-title { font-size: 1.3rem; font-weight: 700; color: var(--c-text-bright); margin-bottom: 8px; }
+    .roadmap-desc { color: var(--c-text-dim); font-size: 0.95rem; max-width: 550px; }
+    .roadmap-tools { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .roadmap-tool { padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; background: rgba(59,158,255,0.1); color: var(--c-primary); border: 1px solid var(--c-border); }
+
+    /* About */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .about-avatar { width: 280px; height: 280px; border-radius: 50%; background: linear-gradient(135deg, var(--c-primary), var(--c-accent)); display: flex; align-items: center; justify-content: center; font-size: 6rem; margin: 0 auto; position: relative; }
+    .about-avatar::after { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 2px dashed var(--c-border); animation: rotate 20s linear infinite; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    .about-text h3 { font-size: 1.6rem; color: var(--c-text-bright); margin-bottom: 16px; }
+    .about-text p { color: var(--c-text-dim); margin-bottom: 16px; font-size: 1rem; }
+    .about-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+    .about-tag { padding: 6px 16px; border-radius: 8px; font-size: 0.85rem; background: rgba(59,158,255,0.1); color: var(--c-primary); border: 1px solid var(--c-border); }
+
+    /* Filter Tabs */
+    .filter-tabs { display: flex; gap: 12px; margin-bottom: 36px; flex-wrap: wrap; }
+    .filter-tab { padding: 8px 20px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; background: rgba(255,255,255,0.05); color: var(--c-text-dim); border: 1px solid var(--c-border); cursor: pointer; transition: var(--transition); }
+    .filter-tab:hover, .filter-tab.active { background: rgba(59,158,255,0.15); color: var(--c-primary); border-color: var(--c-primary); }
+
+    /* Video Modal */
+    .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); }
+    .modal-overlay.active { opacity: 1; pointer-events: all; }
+    .modal-content { width: 90%; max-width: 960px; position: relative; transform: scale(0.9); transition: transform 0.3s ease; }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-close { position: absolute; top: -44px; right: 0; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; opacity: 0.7; transition: var(--transition); line-height: 1; }
+    .modal-close:hover { opacity: 1; transform: rotate(90deg); }
+    .modal-video-wrap { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius); overflow: hidden; background: #000; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+    .modal-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+    .modal-title { color: #fff; font-size: 1.1rem; font-weight: 600; margin-top: 16px; text-align: center; }
+
+    /* Contact */
+    .contact-section { text-align: center; padding: 80px 0 40px; }
+    .contact-links { display: flex; gap: 20px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+    .contact-link { display: flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: var(--radius-sm); background: var(--c-bg-card); border: 1px solid var(--c-border); color: var(--c-text); text-decoration: none; transition: var(--transition); font-size: 0.95rem; }
+    .contact-link:hover { border-color: var(--c-primary); background: var(--c-bg-card-hover); transform: translateY(-2px); }
+    .contact-link svg { width: 20px; height: 20px; }
+
+    footer { text-align: center; padding: 40px 24px; color: var(--c-text-dim); font-size: 0.85rem; border-top: 1px solid var(--c-border); position: relative; z-index: 1; }
+
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: rgba(59,158,255,0.3); border-radius: 4px; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-mobile-btn { display: block; }
+      .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,22,40,0.95); backdrop-filter: blur(20px); padding: 20px 24px; gap: 16px; border-bottom: 1px solid var(--c-border); }
+      .about-grid { grid-template-columns: 1fr; text-align: center; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .hero { padding: 100px 20px 60px; }
+      .roadmap { padding-left: 30px; }
+      .roadmap-item { padding-left: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-water"><div class="wave"></div><div class="wave"></div><div class="wave"></div></div>
+  <div class="particles" id="particles"></div>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="container">
+      <a href="#" class="nav-logo">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M4 20c2-4 6-8 12-8s10 4 12 8" stroke="url(#g1)" stroke-width="2.5" stroke-linecap="round"/><path d="M6 24c2-3 5-6 10-6s8 3 10 6" stroke="url(#g2)" stroke-width="2" stroke-linecap="round" opacity="0.6"/><circle cx="16" cy="10" r="3" fill="url(#g1)"/><defs><linearGradient id="g1" x1="4" y1="20" x2="28" y2="12"><stop stop-color="#3b9eff"/><stop offset="1" stop-color="#00d4aa"/></linearGradient><linearGradient id="g2" x1="6" y1="24" x2="26" y2="18"><stop stop-color="#3b9eff"/><stop offset="1" stop-color="#00d4aa"/></linearGradient></defs></svg>
+        水利数值模拟
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#courses">课程</a></li>
+        <li><a href="#roadmap">学习路线</a></li>
+        <li><a href="#about">关于</a></li>
+        <li><a href="#contact">联系</a></li>
+      </ul>
+      <button class="nav-mobile-btn" id="navBtn" aria-label="菜单">☰</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span>持续更新中</div>
+      <h1>从零掌握<br><span class="gradient">ArcGIS Pro & HEC-RAS</span><br>水动力数值模拟</h1>
+      <p>系统讲解 GIS 数据处理、一维/二维水动力建模、洪水模拟与分析，从入门到工程实战，带你完整走通水利数值模拟全流程。</p>
+      <div class="hero-actions">
+        <a href="#courses" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          开始学习
+        </a>
+        <a href="#roadmap" class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          学习路线
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section style="padding-top:0;">
+    <div class="container">
+      <div class="stats reveal">
+        <div class="stat-card"><div class="stat-number">12</div><div class="stat-label">教学视频</div></div>
+        <div class="stat-card"><div class="stat-number">3.8w+</div><div class="stat-label">总播放量</div></div>
+        <div class="stat-card"><div class="stat-number">5h+</div><div class="stat-label">课程总时长</div></div>
+        <div class="stat-card"><div class="stat-number">2</div><div class="stat-label">核心软件</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Courses -->
+  <section id="courses">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-label">📚 课程目录</div>
+        <h2 class="section-title">全部教学视频</h2>
+        <p class="section-desc">涵盖 ArcGIS Pro 地理数据处理与 HEC-RAS 水动力模拟，点击即可观看。</p>
+      </div>
+
+      <div class="filter-tabs reveal">
+        <button class="filter-tab active" data-filter="all">全部课程</button>
+        <button class="filter-tab" data-filter="hec-ras">HEC-RAS</button>
+        <button class="filter-tab" data-filter="arcgis">ArcGIS Pro</button>
+      </div>
+
+      <div class="courses-grid" id="coursesGrid">
+
+        <!-- ===== HEC-RAS 入门合集 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1yZ4y1R75B" data-p="1" data-title="HEC-RAS 软件简单讲解（合集）">
+          <div class="course-thumb">
+            <div class="course-thumb-bg series">📋</div>
+            <span class="course-tag tag-series">合集 · 入门必看</span>
+            <span class="course-duration">38:10</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 软件简单讲解</div>
+            <div class="course-desc">HEC-RAS 操作的简单教学，整理成合集方便大家学习使用，涵盖一维恒定流与非恒定流演示。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 3.1w</span></div>
+              <span class="course-level level-beginner">入门</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS 一维恒定流 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1iq4y117JQ" data-title="HEC-RAS 一维恒定流计算简单演示">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">💧</div>
+            <span class="course-tag tag-hecras">HEC-RAS</span>
+            <span class="course-duration">11:49</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 一维恒定流计算简单演示</div>
+            <div class="course-desc">一维恒定流计算的快速入门演示，从建模到出结果的完整流程。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 1.3w</span></div>
+              <span class="course-level level-beginner">入门</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS 一维断面编辑 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Yb4y1n7Dq" data-title="HEC-RAS 一维断面编辑简单演示">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">📐</div>
+            <span class="course-tag tag-hecras">HEC-RAS</span>
+            <span class="course-duration">33:07</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 一维断面编辑简单演示</div>
+            <div class="course-desc">详细讲解河道断面数据的编辑方法，包括断面导入、间距调整、无效区域处理等关键操作。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 8k</span></div>
+              <span class="course-level level-intermediate">进阶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS 一维非恒定流 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1e44y1j7FW" data-title="HEC-RAS 一维非恒定流计算简单演示">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">🌊</div>
+            <span class="course-tag tag-hecras">HEC-RAS</span>
+            <span class="course-duration">26:21</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 一维非恒定流计算简单演示</div>
+            <div class="course-desc">在恒定流基础上进阶到非恒定流模拟，讲解边界条件设定、时间步长选择与结果分析。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 1.1w</span></div>
+              <span class="course-level level-intermediate">进阶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS 一维计算结果查看 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Ei4y1y7ke" data-title="HEC-RAS 一维计算结果查看">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">📊</div>
+            <span class="course-tag tag-hecras">HEC-RAS</span>
+            <span class="course-duration">16:09</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 一维计算结果查看</div>
+            <div class="course-desc">模拟完成后如何查看水面线、流速分布、流量过程线等结果，导出数据用于报告制作。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 5.6k</span></div>
+              <span class="course-level level-beginner">入门</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS 一维支流汇入 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Hr4y1x73b" data-title="HEC-RAS 一维支流汇入（手动绘制）">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">🔀</div>
+            <span class="course-tag tag-hecras">HEC-RAS</span>
+            <span class="course-duration">28:05</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 一维支流汇入（手动绘制）</div>
+            <div class="course-desc">讲解如何在 HEC-RAS 中手动绘制支流汇入节点，处理干支流交汇的复杂河道拓扑关系。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 6k</span></div>
+              <span class="course-level level-advanced">高级</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS 圆柱绕流 ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Z5gpzqEN3" data-title="HEC-RAS 圆柱绕流效果">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">🌀</div>
+            <span class="course-tag tag-hecras">HEC-RAS</span>
+            <span class="course-duration">00:17</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS 圆柱绕流效果</div>
+            <div class="course-desc">二维模型圆柱绕流的数值模拟效果展示，直观呈现流场涡旋结构。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 760</span></div>
+              <span class="course-level level-advanced">演示</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-RAS Basics (English) ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1HP4y1A7PV" data-title="HEC-RAS Basics">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">🌐</div>
+            <span class="course-tag tag-hecras">HEC-RAS · EN</span>
+            <span class="course-duration">55:15</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-RAS Basics</div>
+            <div class="course-desc">HEC-RAS 基础英文教程，适合想接触英文原版资料的学习者。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 714</span></div>
+              <span class="course-level level-beginner">入门</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== HEC-HMS for HEC-RAS ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1fa41117Jx" data-title="HEC-HMS for HEC-RAS Users">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">🌧️</div>
+            <span class="course-tag tag-hecras">HEC-HMS · EN</span>
+            <span class="course-duration">48:54</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">HEC-HMS for HEC-RAS Users</div>
+            <div class="course-desc">从 HEC-HMS 降雨-径流模拟到 HEC-RAS 水动力模拟的耦合流程，英文教程。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 820</span></div>
+              <span class="course-level level-intermediate">进阶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Terrain Modification ===== -->
+        <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1bR4y1j7KV" data-title="Terrain Modification in HEC-RAS">
+          <div class="course-thumb">
+            <div class="course-thumb-bg hec-ras">🏔️</div>
+            <span class="course-tag tag-hecras">HEC-RAS · EN</span>
+            <span class="course-duration">46:44</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">Terrain Modification in HEC-RAS</div>
+            <div class="course-desc">HEC-RAS 地形修改功能详解，如何在模型中调整地形以模拟堤防、桥梁等工程构筑物，英文教程。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 841</span></div>
+              <span class="course-level level-advanced">高级</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== ArcGIS Pro 水文分析 ===== -->
+        <div class="course-card reveal" data-category="arcgis" data-bvid="BV1A24y1w7Gd" data-title="ArcGIS Pro 水文分析——河网提取+流域划分">
+          <div class="course-thumb">
+            <div class="course-thumb-bg arcgis">🗺️</div>
+            <span class="course-tag tag-arcgis">ArcGIS Pro</span>
+            <span class="course-duration">31:30</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">ArcGIS Pro 水文分析——河网提取+流域划分</div>
+            <div class="course-desc">利用 ArcGIS Pro 水文分析工具，从 DEM 数据完成填洼、流向计算、汇流累积、河网提取与流域边界划分的完整流程。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 2.4w</span></div>
+              <span class="course-level level-intermediate">进阶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== ArcGIS Pro CAD转DEM ===== -->
+        <div class="course-card reveal" data-category="arcgis" data-bvid="BV1HN411w7b9" data-title="ArcGIS Pro CAD 高程数据转 DEM 栅格文件">
+          <div class="course-thumb">
+            <div class="course-thumb-bg arcgis">🏗️</div>
+            <span class="course-tag tag-arcgis">ArcGIS Pro</span>
+            <span class="course-duration">25:19</span>
+            <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+          </div>
+          <div class="course-body">
+            <div class="course-title">ArcGIS Pro CAD 高程数据转 DEM 栅格文件</div>
+            <div class="course-desc">将 CAD 测量数据中的高程信息转换为 GIS 可用的 DEM 栅格，为后续水文分析和数值建模提供地形数据。</div>
+            <div class="course-meta">
+              <div class="course-meta-left"><span class="course-meta-item">👁 7k</span></div>
+              <span class="course-level level-intermediate">进阶</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section id="roadmap">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-label">🗺️ 学习路线</div>
+        <h2 class="section-title">从零到工程实战的进阶之路</h2>
+        <p class="section-desc">按照这个路线循序渐进，你将完整掌握水利数值模拟的核心能力。</p>
+      </div>
+      <div class="roadmap reveal">
+        <div class="roadmap-item">
+          <div class="roadmap-dot"></div>
+          <div class="roadmap-phase">第一阶段</div>
+          <div class="roadmap-title">GIS 数据准备</div>
+          <div class="roadmap-desc">掌握 ArcGIS Pro 核心操作，学会 CAD 转 DEM、水文分析、河网提取与流域划分，为数值建模打好数据基础。</div>
+          <div class="roadmap-tools"><span class="roadmap-tool">ArcGIS Pro</span><span class="roadmap-tool">DEM 处理</span><span class="roadmap-tool">河网提取</span></div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot"></div>
+          <div class="roadmap-phase">第二阶段</div>
+          <div class="roadmap-title">HEC-RAS 一维建模</div>
+          <div class="roadmap-desc">从软件入门到一维恒定流/非恒定流计算，掌握断面编辑、支流汇入、结果查看等关键技能。</div>
+          <div class="roadmap-tools"><span class="roadmap-tool">HEC-RAS 1D</span><span class="roadmap-tool">恒定流</span><span class="roadmap-tool">非恒定流</span></div>
+        </div>
+        <div class="roadmap-item">
+          <div class="roadmap-dot"></div>
+          <div class="roadmap-phase">第三阶段</div>
+          <div class="roadmap-title">进阶与拓展</div>
+          <div class="roadmap-desc">学习 HEC-HMS 降雨径流耦合、地形修改、二维模拟等进阶内容，拓展水利数值模拟的技术边界。</div>
+          <div class="roadmap-tools"><span class="roadmap-tool">HEC-HMS</span><span class="roadmap-tool">Terrain</span><span class="roadmap-tool">2D 模拟</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid reveal">
+        <div><div class="about-avatar">🌊</div></div>
+        <div class="about-text">
+          <div class="section-label">👤 关于</div>
+          <h3>水利数值模拟教学</h3>
+          <p>专注于水利水电工程领域的数值模拟教学，主攻 ArcGIS Pro 地理信息处理与 HEC-RAS 水动力数值模拟两大方向。</p>
+          <p>内容覆盖从软件入门到工程实战的完整链条，注重「做中学」——每节课都围绕真实案例展开，让你不只是学会操作，更理解背后的水力学原理。</p>
+          <div class="about-tags">
+            <span class="about-tag">ArcGIS Pro</span>
+            <span class="about-tag">HEC-RAS</span>
+            <span class="about-tag">HEC-HMS</span>
+            <span class="about-tag">水动力模拟</span>
+            <span class="about-tag">洪水分析</span>
+            <span class="about-tag">GIS 数据处理</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact-section">
+    <div class="container reveal">
+      <div class="section-label">📬 联系</div>
+      <h2 class="section-title">一起交流学习</h2>
+      <p class="section-desc" style="margin-left:auto;margin-right:auto;text-align:center;">有问题、有建议、想合作？欢迎随时联系。</p>
+      <div class="contact-links">
+        <a href="https://space.bilibili.com/159048530" target="_blank" class="contact-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+          Bilibili 主页
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer><p>© 2026 水利数值模拟教学 · 用数据驱动水利智慧</p></footer>
+
+  <!-- Video Modal -->
+  <div class="modal-overlay" id="videoModal">
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-video-wrap" id="modalVideoWrap"></div>
+      <div class="modal-title" id="modalTitle"></div>
+    </div>
+  </div>
+
+  <script>
+    // Particles
+    (function(){const c=document.getElementById('particles');for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=Math.random()*10+'s';p.style.width=p.style.height=(2+Math.random()*3)+'px';if(Math.random()>0.5)p.style.background='var(--c-accent)';c.appendChild(p)}})();
+
+    // Mobile Nav
+    document.getElementById('navBtn').addEventListener('click',()=>{document.getElementById('navLinks').classList.toggle('open')});
+    document.querySelectorAll('.nav-links a').forEach(a=>{a.addEventListener('click',()=>{document.getElementById('navLinks').classList.remove('open')})});
+
+    // Scroll Reveal
+    const obs=new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target)}})},{threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+    // Filter Tabs
+    document.querySelectorAll('.filter-tab').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+        tab.classList.add('active');
+        const f=tab.dataset.filter;
+        document.querySelectorAll('.course-card').forEach(c=>{
+          c.style.display=(f==='all'||c.dataset.category===f)?'':'none';
+        });
+      });
+    });
+
+    // Video Modal
+    const modal=document.getElementById('videoModal'),mWrap=document.getElementById('modalVideoWrap'),mTitle=document.getElementById('modalTitle');
+    document.querySelectorAll('.course-card').forEach(card=>{
+      card.addEventListener('click',()=>{
+        const bvid=card.dataset.bvid,p=card.dataset.p||'',title=card.dataset.title;
+        const src=`https://player.bilibili.com/player.html?bvid=${bvid}${p?'&p='+p:''}&autoplay=1&high_quality=1`;
+        mWrap.innerHTML=`<iframe src="${src}" allowfullscreen allow="autoplay"></iframe>`;
+        mTitle.textContent=title;
+        modal.classList.add('active');
+        document.body.style.overflow='hidden';
+      });
+    });
+    function closeModal(){modal.classList.remove('active');mWrap.innerHTML='';document.body.style.overflow=''}
+    document.getElementById('modalClose').addEventListener('click',closeModal);
+    modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+  </script>
+</body>
+</html>
