@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>水利数值模拟教学 | ArcGIS Pro & HEC-RAS</title>
-  <meta name="description" content="ArcGIS Pro 地理信息处理与 HEC-RAS 水动力数值模拟教学视频，从入门到实战。">
+  <title>水利数值模拟教学 | HEC-RAS & ArcGIS Pro</title>
+  <meta name="description" content="HEC-RAS 水动力数值模拟与 ArcGIS Pro 地理信息处理教学视频，从入门到实战。">
+  <meta name="referrer" content="no-referrer">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -93,7 +94,7 @@
     .stat-label { color: var(--c-text-dim); margin-top: 4px; font-size: 0.95rem; }
 
     /* Course Grid */
-    .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; }
+    .courses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
     .course-card { background: var(--c-bg-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); cursor: pointer; }
     .course-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-glow); border-color: rgba(59,158,255,0.35); }
     .course-thumb { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
@@ -119,6 +120,20 @@
     .level-beginner { background: rgba(0,212,170,0.15); color: var(--c-accent); }
     .level-intermediate { background: rgba(59,158,255,0.15); color: var(--c-primary); }
     .level-advanced { background: rgba(240,180,40,0.15); color: var(--c-accent2); }
+
+    /* Experience / Article Cards */
+    .experience-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .article-card { display: flex; flex-direction: column; background: var(--c-bg-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; transition: var(--transition); text-decoration: none; }
+    .article-card:hover { transform: translateY(-4px); border-color: var(--c-primary); box-shadow: 0 8px 24px rgba(59,158,255,0.12); }
+    .article-card.is-collapsed { display: none; }
+    .course-card.is-collapsed { display: none; }
+    .article-thumb { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
+    .article-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .article-card:hover .article-thumb img { transform: scale(1.05); }
+    .article-body { padding: 20px 24px 24px; flex: 1; display: flex; flex-direction: column; }
+    .article-title { font-size: 1.1rem; font-weight: 600; color: var(--c-text-bright); margin-bottom: 8px; line-height: 1.4; }
+    .article-desc { color: var(--c-text-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 16px; flex: 1; }
+    .article-meta { display: flex; gap: 16px; font-size: 0.82rem; color: var(--c-text-dim); }
 
     /* Roadmap */
     .roadmap { position: relative; padding-left: 40px; }
@@ -253,12 +268,15 @@
       .nav-mobile-btn { display: block; }
       .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(10,22,40,0.95); backdrop-filter: blur(20px); padding: 20px 24px; gap: 16px; border-bottom: 1px solid var(--c-border); }
       .about-grid { grid-template-columns: 1fr; text-align: center; }
-      .courses-grid { grid-template-columns: 1fr; }
+      .courses-grid, .experience-grid { grid-template-columns: 1fr; }
       .doc-layout { grid-template-columns: 1fr !important; }
       .doc-layout nav { position: static !important; max-height: none !important; }
       .hero { padding: 100px 20px 60px; }
       .roadmap { padding-left: 30px; }
       .roadmap-item { padding-left: 30px; }
+    }
+    @media (min-width: 769px) and (max-width: 1100px) {
+      .courses-grid, .experience-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -278,6 +296,7 @@
         <li><a href="#courses">课程</a></li>
         <li><a href="#resources">官方资源</a></li>
         <li><a href="#roadmap">学习路线</a></li>
+        <li><a href="#services">服务</a></li>
         <li><a href="#about">关于</a></li>
         <li><a href="#contact">联系</a></li>
       </ul>
@@ -289,8 +308,8 @@
   <section class="hero">
     <div class="hero-content">
       <div class="hero-badge"><span class="dot"></span>持续更新中</div>
-      <h1>从零掌握<br><span class="gradient">ArcGIS Pro & HEC-RAS</span><br>水动力数值模拟</h1>
-      <p>Bilibili 视频教学 + HEC-RAS 官方文档中文镜像，两个入口，按需选择。</p>
+      <h1>从零掌握<br><span class="gradient">HEC-RAS & ArcGIS Pro</span><br>水动力数值模拟</h1>
+      <p>Bilibili 视频教学 + HEC-RAS 官方文档中文镜像。一维/二维水动力建模、洪水模拟与分析，从入门到工程实战。</p>
       <div class="hero-actions">
         <a href="#courses" class="btn btn-primary">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -299,6 +318,10 @@
         <a href="#resources" class="btn btn-ghost">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
           📖 查文档找细节
+        </a>
+        <a href="#experience" class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          📝 读经验学技巧
         </a>
       </div>
     </div>
@@ -336,16 +359,16 @@
         <!-- ===== HEC-RAS 入门合集 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1yZ4y1R75B" data-p="1" data-title="HEC-RAS 软件简单讲解（合集）">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i0.hdslb.com/bfs/archive/b18491886beaaaee121908017e9b5695c3d4d060.png" alt="HEC-RAS 软件简单讲解" loading="lazy">
+            <img class="course-thumb-bg" src="http://i0.hdslb.com/bfs/archive/b18491886beaaaee121908017e9b5695c3d4d060.png" alt="HEC-RAS 软件简单讲解" loading="lazy">
             <span class="course-tag tag-series">合集 · 入门必看</span>
             <span class="course-duration">38:10</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 软件简单讲解</div>
+            <div class="course-title">HEC-RAS软件简单讲解</div>
             <div class="course-desc">HEC-RAS 操作的简单教学，整理成合集方便大家学习使用，涵盖一维恒定流与非恒定流演示。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 3.1w</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 3.1w</span><span class="course-meta-item">👍 515</span></div>
               <span class="course-level level-beginner">入门</span>
             </div>
           </div>
@@ -354,16 +377,16 @@
         <!-- ===== HEC-RAS 一维恒定流 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1iq4y117JQ" data-title="HEC-RAS 一维恒定流计算简单演示">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i0.hdslb.com/bfs/archive/d44e6ced0bccda893a01ae3959a6248b1ccb7813.jpg" alt="HEC-RAS 一维恒定流" loading="lazy">
+            <img class="course-thumb-bg" src="http://i0.hdslb.com/bfs/archive/d44e6ced0bccda893a01ae3959a6248b1ccb7813.jpg" alt="HEC-RAS 一维恒定流" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS</span>
             <span class="course-duration">11:49</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 一维恒定流计算简单演示</div>
+            <div class="course-title">HEC-RAS一维恒定流计算简单演示</div>
             <div class="course-desc">一维恒定流计算的快速入门演示，从建模到出结果的完整流程。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 1.3w</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 1.3w</span><span class="course-meta-item">👍 215</span></div>
               <span class="course-level level-beginner">入门</span>
             </div>
           </div>
@@ -372,16 +395,16 @@
         <!-- ===== HEC-RAS 一维断面编辑 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Yb4y1n7Dq" data-title="HEC-RAS 一维断面编辑简单演示">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i2.hdslb.com/bfs/archive/011ba0d308ae83179e8f347dab9cb19db80ce9b6.jpg" alt="HEC-RAS 一维断面编辑" loading="lazy">
+            <img class="course-thumb-bg" src="http://i2.hdslb.com/bfs/archive/011ba0d308ae83179e8f347dab9cb19db80ce9b6.jpg" alt="HEC-RAS 一维断面编辑" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS</span>
             <span class="course-duration">33:07</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 一维断面编辑简单演示</div>
+            <div class="course-title">HEC-RAS一维断面编辑简单演示</div>
             <div class="course-desc">详细讲解河道断面数据的编辑方法，包括断面导入、间距调整、无效区域处理等关键操作。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 8k</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 8,095</span><span class="course-meta-item">👍 141</span></div>
               <span class="course-level level-intermediate">进阶</span>
             </div>
           </div>
@@ -390,16 +413,16 @@
         <!-- ===== HEC-RAS 一维非恒定流 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1e44y1j7FW" data-title="HEC-RAS 一维非恒定流计算简单演示">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i0.hdslb.com/bfs/archive/3157ef65a508b87d28180977e4aa0c6ca2452410.jpg" alt="HEC-RAS 一维非恒定流" loading="lazy">
+            <img class="course-thumb-bg" src="http://i0.hdslb.com/bfs/archive/3157ef65a508b87d28180977e4aa0c6ca2452410.jpg" alt="HEC-RAS 一维非恒定流" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS</span>
             <span class="course-duration">26:21</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 一维非恒定流计算简单演示</div>
+            <div class="course-title">HEC-RAS一维非恒定流计算简单演示</div>
             <div class="course-desc">在恒定流基础上进阶到非恒定流模拟，讲解边界条件设定、时间步长选择与结果分析。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 1.1w</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 1.1w</span><span class="course-meta-item">👍 174</span></div>
               <span class="course-level level-intermediate">进阶</span>
             </div>
           </div>
@@ -408,16 +431,16 @@
         <!-- ===== HEC-RAS 一维计算结果查看 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Ei4y1y7ke" data-title="HEC-RAS 一维计算结果查看">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i1.hdslb.com/bfs/archive/087cf9a07912bea311036a087359e5efe22c02f9.jpg" alt="HEC-RAS 一维计算结果查看" loading="lazy">
+            <img class="course-thumb-bg" src="http://i1.hdslb.com/bfs/archive/087cf9a07912bea311036a087359e5efe22c02f9.jpg" alt="HEC-RAS 一维计算结果查看" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS</span>
             <span class="course-duration">16:09</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 一维计算结果查看</div>
+            <div class="course-title">HEC-RAS一维计算结果查看</div>
             <div class="course-desc">模拟完成后如何查看水面线、流速分布、流量过程线等结果，导出数据用于报告制作。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 5.6k</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 5,591</span><span class="course-meta-item">👍 85</span></div>
               <span class="course-level level-beginner">入门</span>
             </div>
           </div>
@@ -426,16 +449,16 @@
         <!-- ===== HEC-RAS 一维支流汇入 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Hr4y1x73b" data-title="HEC-RAS 一维支流汇入（手动绘制）">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i0.hdslb.com/bfs/archive/7944f8dc0c171aac50900e1cd5fab3337622a412.jpg" alt="HEC-RAS 一维支流汇入" loading="lazy">
+            <img class="course-thumb-bg" src="http://i0.hdslb.com/bfs/archive/7944f8dc0c171aac50900e1cd5fab3337622a412.jpg" alt="HEC-RAS 一维支流汇入" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS</span>
             <span class="course-duration">28:05</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 一维支流汇入（手动绘制）</div>
+            <div class="course-title">HEC-RAS一维支流汇入（手动绘制）</div>
             <div class="course-desc">讲解如何在 HEC-RAS 中手动绘制支流汇入节点，处理干支流交汇的复杂河道拓扑关系。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 6k</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 5,986</span><span class="course-meta-item">👍 112</span></div>
               <span class="course-level level-advanced">高级</span>
             </div>
           </div>
@@ -444,16 +467,16 @@
         <!-- ===== HEC-RAS 圆柱绕流 ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1Z5gpzqEN3" data-title="HEC-RAS 圆柱绕流效果">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i2.hdslb.com/bfs/archive/87d65dc7936768012e80b1b7d8139e45400a4c20.jpg" alt="HEC-RAS 圆柱绕流" loading="lazy">
+            <img class="course-thumb-bg" src="http://i2.hdslb.com/bfs/archive/87d65dc7936768012e80b1b7d8139e45400a4c20.jpg" alt="HEC-RAS 圆柱绕流" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS</span>
             <span class="course-duration">00:17</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">HEC-RAS 圆柱绕流效果</div>
+            <div class="course-title">HEC-RAS圆柱绕流效果</div>
             <div class="course-desc">二维模型圆柱绕流的数值模拟效果展示，直观呈现流场涡旋结构。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 760</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 760</span><span class="course-meta-item">👍 11</span></div>
               <span class="course-level level-advanced">演示</span>
             </div>
           </div>
@@ -462,7 +485,7 @@
         <!-- ===== HEC-RAS Basics (English) ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1HP4y1A7PV" data-title="HEC-RAS Basics">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i2.hdslb.com/bfs/archive/528be79c566f42993a1bfa34306e2ced24c9899f.png" alt="HEC-RAS Basics" loading="lazy">
+            <img class="course-thumb-bg" src="http://i2.hdslb.com/bfs/archive/528be79c566f42993a1bfa34306e2ced24c9899f.png" alt="HEC-RAS Basics" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS · EN</span>
             <span class="course-duration">55:15</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
@@ -471,7 +494,7 @@
             <div class="course-title">HEC-RAS Basics</div>
             <div class="course-desc">HEC-RAS 基础英文教程，适合想接触英文原版资料的学习者。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 714</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 715</span><span class="course-meta-item">👍 6</span></div>
               <span class="course-level level-beginner">入门</span>
             </div>
           </div>
@@ -480,7 +503,7 @@
         <!-- ===== HEC-HMS for HEC-RAS ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1fa41117Jx" data-title="HEC-HMS for HEC-RAS Users">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i0.hdslb.com/bfs/archive/c34ad2e5241142ce8f1b7449a6e7aca734d70693.png" alt="HEC-HMS for HEC-RAS" loading="lazy">
+            <img class="course-thumb-bg" src="http://i0.hdslb.com/bfs/archive/c34ad2e5241142ce8f1b7449a6e7aca734d70693.png" alt="HEC-HMS for HEC-RAS" loading="lazy">
             <span class="course-tag tag-hecras">HEC-HMS · EN</span>
             <span class="course-duration">48:54</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
@@ -489,7 +512,7 @@
             <div class="course-title">HEC-HMS for HEC-RAS Users</div>
             <div class="course-desc">从 HEC-HMS 降雨-径流模拟到 HEC-RAS 水动力模拟的耦合流程，英文教程。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 820</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 820</span><span class="course-meta-item">👍 11</span></div>
               <span class="course-level level-intermediate">进阶</span>
             </div>
           </div>
@@ -498,7 +521,7 @@
         <!-- ===== Terrain Modification ===== -->
         <div class="course-card reveal" data-category="hec-ras" data-bvid="BV1bR4y1j7KV" data-title="Terrain Modification in HEC-RAS">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i2.hdslb.com/bfs/archive/cbb399484742f78403a2ae6792546ecccb8e144e.png" alt="Terrain Modification" loading="lazy">
+            <img class="course-thumb-bg" src="http://i2.hdslb.com/bfs/archive/cbb399484742f78403a2ae6792546ecccb8e144e.png" alt="Terrain Modification" loading="lazy">
             <span class="course-tag tag-hecras">HEC-RAS · EN</span>
             <span class="course-duration">46:44</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
@@ -507,7 +530,7 @@
             <div class="course-title">Terrain Modification in HEC-RAS</div>
             <div class="course-desc">HEC-RAS 地形修改功能详解，如何在模型中调整地形以模拟堤防、桥梁等工程构筑物，英文教程。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 841</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 842</span><span class="course-meta-item">👍 14</span></div>
               <span class="course-level level-advanced">高级</span>
             </div>
           </div>
@@ -516,16 +539,16 @@
         <!-- ===== ArcGIS Pro 水文分析 ===== -->
         <div class="course-card reveal" data-category="arcgis" data-bvid="BV1A24y1w7Gd" data-title="ArcGIS Pro 水文分析——河网提取+流域划分">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i0.hdslb.com/bfs/archive/b4400af77525c12d750951bda00fa77c9c4e3d58.jpg" alt="ArcGIS Pro 水文分析" loading="lazy">
+            <img class="course-thumb-bg" src="http://i0.hdslb.com/bfs/archive/b4400af77525c12d750951bda00fa77c9c4e3d58.jpg" alt="ArcGIS Pro 水文分析" loading="lazy">
             <span class="course-tag tag-arcgis">ArcGIS Pro</span>
             <span class="course-duration">31:30</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">ArcGIS Pro 水文分析——河网提取+流域划分</div>
+            <div class="course-title">ArcGIS Pro水文分析——河网提取+流域划分</div>
             <div class="course-desc">利用 ArcGIS Pro 水文分析工具，从 DEM 数据完成填洼、流向计算、汇流累积、河网提取与流域边界划分的完整流程。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 2.4w</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 2.4w</span><span class="course-meta-item">👍 453</span></div>
               <span class="course-level level-intermediate">进阶</span>
             </div>
           </div>
@@ -534,26 +557,33 @@
         <!-- ===== ArcGIS Pro CAD转DEM ===== -->
         <div class="course-card reveal" data-category="arcgis" data-bvid="BV1HN411w7b9" data-title="ArcGIS Pro CAD 高程数据转 DEM 栅格文件">
           <div class="course-thumb">
-            <img class="course-thumb-bg" src="https://i1.hdslb.com/bfs/archive/a548f3560568826e2381c10e7ed529cb977da71e.jpg" alt="ArcGIS Pro CAD转DEM" loading="lazy">
+            <img class="course-thumb-bg" src="http://i1.hdslb.com/bfs/archive/a548f3560568826e2381c10e7ed529cb977da71e.jpg" alt="ArcGIS Pro CAD转DEM" loading="lazy">
             <span class="course-tag tag-arcgis">ArcGIS Pro</span>
             <span class="course-duration">25:19</span>
             <div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
           </div>
           <div class="course-body">
-            <div class="course-title">ArcGIS Pro CAD 高程数据转 DEM 栅格文件</div>
+            <div class="course-title">ArcGIS Pro CAD高程数据转DEM栅格文件</div>
             <div class="course-desc">将 CAD 测量数据中的高程信息转换为 GIS 可用的 DEM 栅格，为后续水文分析和数值建模提供地形数据。</div>
             <div class="course-meta">
-              <div class="course-meta-left"><span class="course-meta-item">👁 7k</span></div>
+              <div class="course-meta-left"><span class="course-meta-item">👁 7,032</span><span class="course-meta-item">👍 166</span></div>
               <span class="course-level level-intermediate">进阶</span>
             </div>
           </div>
         </div>
 
       </div>
+      <div id="coursesToggle" style="text-align:center;margin-top:24px;display:none;">
+        <button onclick="toggleCourses()" class="btn btn-ghost" style="font-size:0.9rem;">
+          <span id="coursesToggleText">展开全部 ▼</span>
+        </button>
+      </div>
     </div>
   </section>
 
     <!-- HEC-RAS Documentation Mirror -->
+
+  <!-- Experience Posts -->
   <section id="resources">
     <div class="container">
       <div class="reveal">
@@ -979,6 +1009,66 @@
     </div>
   </section>
 
+  <section id="experience">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-label">📝 路径三：经验分享</div>
+        <h2 class="section-title">实战经验与踩坑记录</h2>
+        <p class="section-desc">建模过程中遇到的实际问题与解决方案。</p>
+      </div>
+      <div class="experience-grid reveal" id="experienceList">
+        <!-- ⬇️ 添加经验贴：复制下面的 article-card 块，修改 data-cvid 和内容即可 -->
+        <a class="article-card" href="https://www.bilibili.com/read/cv19162842/" target="_blank" data-cvid="cv19162842">
+          <div class="article-thumb">
+            <img src="https://i0.hdslb.com/bfs/article/banner/13161f6ed6ba760b498623f2a9578853dcafd219.png" alt="HEC RAS二维计算步长设置" loading="lazy">
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">HEC RAS二维计算步长设置</h3>
+            <p class="article-desc">详解 Courant 数原理，教你快速判断计算步长是否合理，避免模型跑崩报 'unstable'。</p>
+            <div class="article-meta">
+              <span>👁 1,142 阅读</span>
+              <span>👍 7 点赞</span>
+            </div>
+          </div>
+        </a>
+        <!-- 👆 示例结束 -->
+
+        <a class="article-card" href="https://www.bilibili.com/read/cv22969341/" target="_blank" data-cvid="cv22969341">
+          <div class="article-thumb">
+            <img src="https://i0.hdslb.com/bfs/article/banner/a2513db7c5285b70399b219c8b318e46b6bc958e.png" alt="地球坐标系与投影方式的理解" loading="lazy">
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">地球坐标系与投影方式的理解(关于北京54,西安80,WGS84;高斯,兰勃特,墨卡托投影)</h3>
+            <p class="article-desc">详解北京 54、西安 80、WGS84 坐标系区别，以及高斯、兰勃特、墨卡托投影的适用场景。</p>
+            <div class="article-meta">
+              <span>👁 3,726 阅读</span>
+              <span>👍 33 点赞</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="article-card" href="https://www.bilibili.com/read/cv22450046/" target="_blank" data-cvid="cv22450046">
+          <div class="article-thumb">
+            <img src="https://i0.hdslb.com/bfs/article/e7c045995bf915c5ed25ffc6967b3a8fbc0476b0.png" alt="GISPRO中如何添加底图" loading="lazy">
+          </div>
+          <div class="article-body">
+            <h3 class="article-title">GISPRO中如何添加底图</h3>
+            <p class="article-desc">ArcGIS Pro 添加在线底图的步骤与常见问题，适合 GIS 新手快速上手。</p>
+            <div class="article-meta">
+              <span>👁 2,391 阅读</span>
+              <span>👍 15 点赞</span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div id="experienceToggle" style="text-align:center;margin-top:20px;display:none;">
+        <button onclick="toggleExperience()" class="btn btn-ghost" style="font-size:0.9rem;">
+          <span id="toggleText">展开全部 ▼</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
   <!-- Roadmap -->
   <section id="roadmap">
     <div class="container">
@@ -1013,6 +1103,61 @@
     </div>
   </section>
 
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-label">💼 服务</div>
+        <h2 class="section-title">需要帮助？我可以协助</h2>
+        <p class="section-desc">如果你在 HEC-RAS 建模过程中遇到困难，或者需要专业的水利数值模拟支持，欢迎联系我。</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;" class="reveal">
+        <!-- Service 1 -->
+        <div style="padding:28px;background:var(--c-bg-card);border:1px solid var(--c-border);border-radius:var(--radius);transition:var(--transition);">
+          <div style="font-size:2rem;margin-bottom:12px;">🔧</div>
+          <h3 style="color:var(--c-text-bright);font-size:1.15rem;font-weight:700;margin-bottom:10px;">建模代做</h3>
+          <p style="color:var(--c-text-dim);font-size:0.92rem;line-height:1.7;margin-bottom:16px;">承接 HEC-RAS 一维/二维水动力建模、溃坝分析、洪水风险评估等项目。从数据处理到模型搭建、结果分析，全流程交付。</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(59,158,255,0.1);color:var(--c-primary);border:1px solid var(--c-border);">一维恒定流</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(59,158,255,0.1);color:var(--c-primary);border:1px solid var(--c-border);">一维非恒定流</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(59,158,255,0.1);color:var(--c-primary);border:1px solid var(--c-border);">二维建模</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(59,158,255,0.1);color:var(--c-primary);border:1px solid var(--c-border);">溃坝分析</span>
+          </div>
+        </div>
+        <!-- Service 2 -->
+        <div style="padding:28px;background:var(--c-bg-card);border:1px solid var(--c-border);border-radius:var(--radius);transition:var(--transition);">
+          <div style="font-size:2rem;margin-bottom:12px;">📚</div>
+          <h3 style="color:var(--c-text-bright);font-size:1.15rem;font-weight:700;margin-bottom:10px;">一对一指导</h3>
+          <p style="color:var(--c-text-dim);font-size:0.92rem;line-height:1.7;margin-bottom:16px;">针对你的具体项目，手把手带你走通建模全流程。从软件安装、数据准备到模型率定，解决你卡住的每一个环节。</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(0,212,170,0.1);color:var(--c-accent);border:1px solid var(--c-border);">软件入门</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(0,212,170,0.1);color:var(--c-accent);border:1px solid var(--c-border);">项目指导</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(0,212,170,0.1);color:var(--c-accent);border:1px solid var(--c-border);">问题答疑</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(0,212,170,0.1);color:var(--c-accent);border:1px solid var(--c-border);">毕业设计</span>
+          </div>
+        </div>
+        <!-- Service 3 -->
+        <div style="padding:28px;background:var(--c-bg-card);border:1px solid var(--c-border);border-radius:var(--radius);transition:var(--transition);">
+          <div style="font-size:2rem;margin-bottom:12px;">📊</div>
+          <h3 style="color:var(--c-text-bright);font-size:1.15rem;font-weight:700;margin-bottom:10px;">数据处理</h3>
+          <p style="color:var(--c-text-dim);font-size:0.92rem;line-height:1.7;margin-bottom:16px;">ArcGIS Pro 数据预处理：CAD 转 DEM、水文分析、河网提取、流域划分，为 HEC-RAS 建模准备好地形数据。</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(240,180,40,0.1);color:var(--c-accent2);border:1px solid var(--c-border);">CAD → DEM</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(240,180,40,0.1);color:var(--c-accent2);border:1px solid var(--c-border);">水文分析</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(240,180,40,0.1);color:var(--c-accent2);border:1px solid var(--c-border);">河网提取</span>
+            <span style="padding:4px 12px;border-radius:6px;font-size:0.8rem;background:rgba(240,180,40,0.1);color:var(--c-accent2);border:1px solid var(--c-border);">流域划分</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="text-align:center;margin-top:36px;">
+        <a href="mailto:Minghao_xut1011@outlook.com?subject=HEC-RAS 建模咨询" class="btn btn-primary" style="font-size:1rem;">
+          📧 发邮件咨询
+        </a>
+        <p style="color:var(--c-text-dim);font-size:0.85rem;margin-top:12px;">描述你的需求和预算，我会尽快回复</p>
+      </div>
+    </div>
+  </section>
+
   <!-- About -->
   <section id="about">
     <div class="container">
@@ -1021,7 +1166,7 @@
         <div class="about-text">
           <div class="section-label">👤 关于</div>
           <h3>水利数值模拟教学</h3>
-          <p>专注于水利水电工程领域的数值模拟教学，主攻 ArcGIS Pro 地理信息处理与 HEC-RAS 水动力数值模拟两大方向。</p>
+          <p>专注于水利水电工程领域的数值模拟教学，主攻 HEC-RAS 水动力数值模拟与 ArcGIS Pro 水动力数值模拟两大方向。</p>
           <p>内容覆盖从软件入门到工程实战的完整链条，注重「做中学」——每节课都围绕真实案例展开，让你不只是学会操作，更理解背后的水力学原理。</p>
           <div class="about-tags">
             <span class="about-tag">ArcGIS Pro</span>
@@ -1125,6 +1270,40 @@
       },{rootMargin:'-20% 0px -70% 0px'});
       sections.forEach(s=>obs2.observe(s.el));
     })();
+
+    // Courses: collapse beyond first 6 (3×2)
+    (function(){
+      const cards=document.querySelectorAll('#coursesGrid .course-card');
+      const toggle=document.getElementById('coursesToggle');
+      if(cards.length>6){
+        cards.forEach((c,i)=>{if(i>=6)c.classList.add('is-collapsed')});
+        toggle.style.display='';
+      }
+    })();
+    function toggleCourses(){
+      const cards=document.querySelectorAll('#coursesGrid .course-card');
+      const text=document.getElementById('coursesToggleText');
+      const anyHidden=cards[6]?.classList.contains('is-collapsed');
+      cards.forEach((c,i)=>{if(i>=6)c.classList.toggle('is-collapsed')});
+      text.textContent=anyHidden?'收起 ▲':'展开全部 ▼';
+    }
+
+    // Experience Posts: collapse beyond first 3 (3×1)
+    (function(){
+      const cards=document.querySelectorAll('#experienceList .article-card');
+      const toggle=document.getElementById('experienceToggle');
+      if(cards.length>3){
+        cards.forEach((c,i)=>{if(i>=3)c.classList.add('is-collapsed')});
+        toggle.style.display='';
+      }
+    })();
+    function toggleExperience(){
+      const cards=document.querySelectorAll('#experienceList .article-card');
+      const text=document.getElementById('toggleText');
+      const anyHidden=cards[3]?.classList.contains('is-collapsed');
+      cards.forEach((c,i)=>{if(i>=3)c.classList.toggle('is-collapsed')});
+      text.textContent=anyHidden?'收起 ▲':'展开全部 ▼';
+    }
 
     // Video Modal
     const modal=document.getElementById('videoModal'),mWrap=document.getElementById('modalVideoWrap'),mTitle=document.getElementById('modalTitle');
